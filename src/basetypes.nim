@@ -120,6 +120,7 @@ type
   SvdDeviceMetadata* = ref object
     file*: string
     name*: string
+    version*: string
     description*: string
     licenseBlock*: Option[string]
 

@@ -13,6 +13,7 @@ import regex
 import ./basetypes
 import ./utils
 import ./cpuirq
+import ./version
 
 const
   Indent = "  "
@@ -255,8 +256,20 @@ proc createTypeDefs(dev: SvdDevice, names: Table[SvdId, string]):
       result.add td
 
 
+proc renderAutogenHeader(dev: SvdDevice, outf: File) =
+  let filenameParts = getAppFilename().splitFile()
+  let toolName = filenameParts.name & filenameParts.ext
+  outf.writeLine("# This file is auto-generated.  Edits will be lost if the tool is run again.\n#")
+  outf.writeLine(fmt"# Tool:                 {toolName}")
+  outf.writeLine(fmt"# Tool version:         {getVersion().strip()}")
+  outf.writeLine(fmt"# Tool args:            {commandLineParams()}")
+  outf.writeLine(fmt"# Input file:           {dev.metadata.file}")
+  outf.writeLine(fmt"# Input file version:   {dev.metadata.version}")
+  outf.writeLine("#")
+
+
 proc renderNimImportExports(dev: SvdDevice, outf: File) =
-  outf.write("# Peripheral access API for $# microcontrollers (generated using svd2nim)\n\n" % dev.metadata.name.toUpper())
+  outf.write("# Peripheral access API for $# microcontrollers\n\n" % dev.metadata.name.toUpper())
   outf.writeLine("import std/volatile")
   outf.writeLine("import std/bitops")
   outf.writeLine("import uncheckedenums")
@@ -924,6 +937,7 @@ proc renderDevice*(dev: SvdDevice, dirpath: string) =
   var outf = open(outFileName, fmWrite)
   defer: outf.close()
 
+  renderAutogenHeader(dev, outf)
   renderNimImportExports(dev, outf)
 
   var codegenSymbols: HashSet[string]

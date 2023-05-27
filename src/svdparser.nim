@@ -299,11 +299,13 @@ proc readSVD*(path: string): SvdDevice =
   let
     xml = path.loadXml()
     deviceName = xml.getChildTextExc("name")
+    fileVersion = xml.getChildTextExc("version")
     deviceDescription = xml.getChildTextExc("description").strip()
 
   result.metadata = SvdDeviceMetadata(
     file: path,
     name: deviceName,
+    version: fileVersion,
     description: deviceDescription,
     licenseBlock: xml.getChildTextOpt("licenseText")
   )

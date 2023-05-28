@@ -920,9 +920,9 @@ proc renderPeripheralRegAccessors(dev: SvdDevice, codegenSymbols: var HashSet[st
 
 
 proc renderDevice*(dev: SvdDevice, dirpath: string) =
-  let
-    outFileName = dirPath / dev.metadata.name.toLower() & ".nim"
-    outf = open(outFileName, fmWrite)
+  let outFileName = dirPath / dev.metadata.name.toLower() & ".nim"
+  var outf = open(outFileName, fmWrite)
+  defer: outf.close()
 
   renderNimImportExports(dev, outf)
 
@@ -938,5 +938,3 @@ proc renderDevice*(dev: SvdDevice, dirpath: string) =
   renderPeripheralRegTypeDefs(dev, codegenSymbols, typemap, outf)
   renderPeripheralInstances(dev, codegenSymbols, typemap, outf)
   renderPeripheralRegAccessors(dev, codegenSymbols, typemap, outf)
-
-  outf.close()

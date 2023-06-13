@@ -572,7 +572,7 @@ func createAccessors(periph: SvdPeripheral, types: Table[SvdId, string],
         keyword: "proc",
         name: "read",
         public: true,
-        args: @[("reg", regTypeName)],
+        args: @[("reg", fmt"static {regTypeName}")],
         retType: valType,
         pragma: @["inline"],
       )
